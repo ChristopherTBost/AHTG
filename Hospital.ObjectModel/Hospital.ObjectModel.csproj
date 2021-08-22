@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>AHTG.Hospital.ObjectModel</RootNamespace>
+    <AssemblyName>AHTG.Hospital.ObjectModel</AssemblyName>
+    <Configurations>Debug;Release;Test;Debug - Test</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Test|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;IN_MEMORY_CONTEXT</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.9" />
+  </ItemGroup>
+
+</Project>
