@@ -12,3 +12,19 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+.with-margin {
+    margin : 5px 10px 5px 10px;
+}
+
+a.act-link {
+    color:blue !important;
+}
+label {
+    margin: 5px;
+}
+.emphasis{
+    color : red !important;
+    font-style : italic;
+    font-weight : bold;
+}

@@ -6,6 +6,10 @@ namespace AHTG.Hospital.Logic
 {
     using OM = AHTG.Hospital.ObjectModel;
 
+    /// <summary>
+    /// most business objects i work with tend to have numerous "Can" operations;
+    /// therefore, separating them into thier own partial helps organize.
+    /// </summary>
     static partial class Hospital
     {
         /*

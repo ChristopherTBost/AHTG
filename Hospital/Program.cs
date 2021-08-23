@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace AHTG.Hospital.Web
 {
+    /// <summary>
+    /// main program, this is all straight from the template
+    /// </summary>
     public class Program
     {
         public static void Main(string[] args)

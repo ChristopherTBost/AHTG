@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hospital.Core\Hospital.Core.csproj" />
     <ProjectReference Include="..\Hospital.ObjectModel\Hospital.ObjectModel.csproj" />
   </ItemGroup>
 

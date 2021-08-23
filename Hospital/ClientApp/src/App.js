@@ -14,7 +14,7 @@ export default class App extends Component {
   render () {
     return (
       <Layout>
-            <Route exact path='/' component={HospitalData} />
+        <Route exact path='/' component={HospitalData} />
         <Route path='/hospital-data' component={HospitalData} />
         <Route path='/hospital-edit' component={HospitalEdit} />
         <Route path='/hospital-create' component={HospitalCreate} />

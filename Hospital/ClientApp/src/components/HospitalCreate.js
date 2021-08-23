@@ -3,30 +3,28 @@ import React, { Component } from 'react';
 export class HospitalCreate extends Component {
     static displayName = HospitalCreate.name;
 
-  constructor(props) {
-    super(props);
-      this.state = {
-          hospital: { id : 0, title : 'unknown' },
-          loading : false
-      };
+    constructor(props) {
+        super(props);
+        this.state = {
+            hospital: { id: 0, title: 'unknown' },
+        };
 
-      this.handleChange = this.handleChange.bind(this);
-      this.submitForm = this.submitForm.bind(this);
-      //this.handleSubmit = this.handleSubmit.bind(this);
-  }
+        this.handleChange = this.handleChange.bind(this);
+        this.submitForm = this.submitForm.bind(this);
+    }
 
+    /*
+     * keep model and view in sync
+     */
     handleChange(event) {
         var h = this.state.hospital;
         h.title = event.target.value;
         this.setState({ hospital: h });
     };
 
-    handleSubmit(event)
-    {
-        event.preventDefault();
-        window.location.href = "/hospital-data";
-    };
-
+    /*
+    * return to index
+    */
     cancel() {
         window.location.href = "../hospital-data/";
     }
@@ -35,25 +33,26 @@ export class HospitalCreate extends Component {
         this.createHospital(this.state.hospital);
     };
 
-    render()
-    {
-        if (this.state.loading)
-            return <p><em>Loading...</em></p>;
-    return (
-      <div>
-            <h1>{this.state.hospital.title}</h1>
+    render() {
 
-            <form ref={ref => this.formRef = ref} method="post" action='../hospital/create/' onSubmit={this.handleSubmit}>
-                <label htmlFor="title">Title</label>
-                <input id="title" name="title" type="text" onChange={this.handleChange} defaultValue={this.state.hospital.title} />
-                <p></p>
-            </form>
-            <button onClick={this.submitForm}>Save</button>
-            <button onClick={this.cancel}>Cancel</button>
-      </div>
-    );
+        return (
+            <div>
+                <h1>{this.state.hospital.title}</h1>
+
+                <fieldset>
+                    <label htmlFor="title">Title</label>
+                    <input id="title" name="title" type="text" onChange={this.handleChange} defaultValue={this.state.hospital.title} />
+                    <p></p>
+                </fieldset>
+                <button className="btn-primary with-margin" onClick={this.submitForm}>Save</button>
+                <button className="btn-primary with-margin" onClick={this.cancel}>Cancel</button>
+            </div>
+        );
     };
 
+    /*
+    * perform the create operation API call
+    */
     async createHospital(hospital) {
         const response = await
             fetch('hospital/create/',
@@ -66,7 +65,8 @@ export class HospitalCreate extends Component {
                     body: JSON.stringify(hospital)
                 });
         const data = await response.json();
-        this.setState({ hospital: data, loading: false });
+        /* check error condition. not implemented */
+        this.setState({ hospital: data });
         this.cancel();
     };
 }

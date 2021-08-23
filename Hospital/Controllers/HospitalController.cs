@@ -7,6 +7,29 @@ using System.Threading.Tasks;
 
 namespace AHTG.Hospital.Web.Controllers
 {
+    /// <summary>
+    /// Single controller to handle CRUD ops.
+    /// Added an "Index" to provide a list/start point.
+    /// 
+    /// Each API call is basically
+    /// 1. Get the Entity from the Body (Framework Provided)
+    /// 2. Call a static function in Logic which actually performs the work.
+    /// 3. Check status and map to something the client code knows how to deal with.
+    /// 4. If success SaveChanges
+    /// 
+    /// I tend to do data wrangling in the controller and business rule implementation in the Logic.
+    /// IMHO this tends to facilitate better automated testing.
+    /// 
+    /// Personally been throwing around ideas dealing with errors -vs- successful API calls.
+    /// But didn't try and implement for this exercise.
+    /// 
+    /// e.g.
+    /// class Result {
+    ///     public int Code {get;}
+    ///     public string Message {get;}
+    ///     public object ResultData {get;}
+    /// }
+    /// </summary>
     public class HospitalController : ControllerBase
     {
         /// <summary>
@@ -41,7 +64,7 @@ namespace AHTG.Hospital.Web.Controllers
         /// attempts to read a single Hospital by Id
         /// </summary>
         /// <param name="hospitalId">the primary key of the <see cref="ObjectModel.Entities.Hospital"/>.</param>
-        /// <returns></returns>
+        /// <returns>the hospital with the matchin key</returns>
         [HttpGet]
         public ObjectModel.Entities.Hospital Read(int hospitalId)
         {
@@ -53,6 +76,12 @@ namespace AHTG.Hospital.Web.Controllers
             return new ObjectModel.Entities.Hospital();
         }
 
+        /// <summary>
+        /// creates a new Hospital entity and saves it to the data store.
+        /// </summary>
+        /// <param name="hospital">the new hospital</param>
+        /// <returns>the hospital with default values applied</returns>
+        /// <remarks>NOTE: the primary key is ignored, so subsequent calls utilizing the return value will create new objects</remarks>
         [HttpPost]
         public ObjectModel.Entities.Hospital Create([FromBody]ObjectModel.Entities.Hospital hospital)
         {
@@ -66,6 +95,11 @@ namespace AHTG.Hospital.Web.Controllers
             return hospital;
         }
 
+        /// <summary>
+        /// the Hospital entity to update
+        /// </summary>
+        /// <param name="hospital">a hospital</param>
+        /// <returns>the updated hospital</returns>
         [HttpPost]
         public ObjectModel.Entities.Hospital Update([FromBody]ObjectModel.Entities.Hospital hospital)
         {
@@ -79,6 +113,12 @@ namespace AHTG.Hospital.Web.Controllers
             return hospital;
         }
 
+        /// <summary>
+        /// deletes a Hospital entity from the store
+        /// </summary>
+        /// <param name="hospital">the hospital to be deleted</param>
+        /// <returns>the deleted entity</returns>
+        /// <remarks>this could easily be just the primary key</remarks>
         [HttpPost]
         public ObjectModel.Entities.Hospital Delete([FromBody]ObjectModel.Entities.Hospital hospital)
         {

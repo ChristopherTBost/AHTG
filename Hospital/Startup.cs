@@ -11,8 +11,15 @@ namespace AHTG.Hospital.Web
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
 
+    /// <summary>
+    /// Class for configuring the SPA during startup
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// used to throw a few sample entities in the newly created data store
+        /// </summary>
+        /// <param name="hospitalContext">newly created context</param>
         static void PopulateSampleData(ObjectModel.Context.HospitalContext hospitalContext)
         {
             hospitalContext.Add(new ObjectModel.Entities.Hospital() { Title = "Hospital 1" });
@@ -20,14 +27,24 @@ namespace AHTG.Hospital.Web
             hospitalContext.SaveChanges();
         }
 
+        /// <summary>
+        /// default constructor called by the pipeline
+        /// </summary>
+        /// <param name="configuration">configuration of the app</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// access to the app configuration
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// called during app construction pipeline to add services. mostly from template
+        /// </summary>
+        /// <param name="services">the application wide IOC service container</param>
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -39,23 +56,23 @@ namespace AHTG.Hospital.Web
                 configuration.RootPath = "ClientApp/build";
             });
 
-            services.AddDbContext<Hospital.ObjectModel.Context.HospitalContext>(
+            // add the context service, understanding is this is a "per-request" lifetime manager by default
+            services.AddDbContext<Hospital.ObjectModel.Context.HospitalContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("HospitalDbConnection")));
 
-#if IN_MEMORY_CONTEXT
-                options => 
-                options.UseSqlite(new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder { DataSource = ":memory:" }.ToString()));
-//                options.UseInMemoryDatabase(Configuration["TargetDatabaseName"])) ; ;
-#else
-                options => options.UseSqlServer(Configuration.GetConnectionString("HospitalDbConnection"))
-                );
-#endif
-
-
-            services.AddScoped<Hospital.ObjectModel.HospitalRepository>((sp) => new ObjectModel.HospitalRepository( sp.GetRequiredService<Hospital.ObjectModel.Context.HospitalContext>()));
+            // configure the repository pattern provider
+            services.AddScoped<Hospital.ObjectModel.HospitalRepository>(
+                (sp) => new ObjectModel.HospitalRepository(sp.GetRequiredService<Hospital.ObjectModel.Context.HospitalContext>()));
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// Template geenreated
+        /// </summary>
+        /// <param name="app">the application builder</param>
+        /// <param name="env">the hosting environment</param>
+        /// <param name="db">injected context</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Hospital.ObjectModel.Context.HospitalContext db)
         {
             if (env.IsDevelopment())
@@ -68,20 +85,6 @@ namespace AHTG.Hospital.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            bool created = false;
-            try
-            {
-                created = db.Database.EnsureCreated();
-            } catch (System.Exception e)
-            {
-                db.Database.EnsureDeleted();
-                created = db.Database.EnsureCreated();
-            }
-            if (!created)
-                System.Diagnostics.Debug.WriteLine("Database exists");
-            else
-                PopulateSampleData(db);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -106,6 +109,31 @@ namespace AHTG.Hospital.Web
                 }
             });
 
+            /*
+             * the following code is specific to this being an exercise
+             * i wouldn't normally "create" a datastore this way.
+             */
+            #region database creation
+
+            bool created = false;
+            try
+            {
+                created = db.Database.EnsureCreated();
+            }
+            catch (System.Exception)
+            {
+                /*
+                 * had some situations where an existing database was throwing Exceptions
+                 */
+                db.Database.EnsureDeleted();
+                created = db.Database.EnsureCreated();
+            }
+
+            // only add sample data if newly created
+            if (created)
+                PopulateSampleData(db);
+
+            #endregion database creation
         }
     }
 }

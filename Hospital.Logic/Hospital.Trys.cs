@@ -7,6 +7,14 @@ namespace AHTG.Hospital.Logic
 {
     using OM = AHTG.Hospital.ObjectModel;
 
+    /// <summary>
+    /// most business objects i work with tend to have numerous "Try" operations;
+    /// therefore, separating them into thier own partial helps organize.
+    /// </summary>
+    /// <remarks>
+    /// read operations can be more efficiently done if the Repository.EntitySet.Where(...) is used.
+    /// that's generally how i code it; but this is more consistent.
+    /// </remarks>
     public partial class Hospital
     {
 
@@ -26,6 +34,13 @@ namespace AHTG.Hospital.Logic
         /// <returns>the <see cref="LogicResultCollection"/> of the operation</returns>
         public static LogicResultCollection TryReadAll(OM.HospitalRepository repository, out IEnumerable<OM.Entities.Hospital> hospitals)
         {
+            /*
+             * must ToList because CanRead can not be converted to SQL
+             * an excellent example of why allowing the upper layer to query the DbSet<T> directly is more performant
+             * 
+             * there are situations that require this type of behavior; however, coding them as a stored proceedure when
+             * possible is preffered.
+             */
             hospitals = from h in repository.Hospitals.ToList()
                         where CanRead(h)
                         select h;

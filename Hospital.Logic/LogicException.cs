@@ -4,7 +4,10 @@ using System.Text;
 
 namespace AHTG.Hospital.Logic
 {
-    public class LogicException : Core.Exception
+    /// <summary>
+    /// Base exception class for exception behavior caught or initiated in the Logic code
+    /// </summary>
+    public class LogicException : System.Exception
     {
         public LogicException(string message) : base(message)
         {
