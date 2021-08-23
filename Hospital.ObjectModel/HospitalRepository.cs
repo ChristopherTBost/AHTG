@@ -43,10 +43,13 @@ namespace AHTG.Hospital.ObjectModel
         public T Delete<T>(T entity) =>(T)hospitalContext.Remove(entity).Entity;
         public T Update<T>(T entity) => (T)hospitalContext.Update(entity).Entity;
 
+        public void SaveChanges() => hospitalContext.SaveChanges();
+
         public HospitalRepository(Context.HospitalContext hospitalContext)
             :base()
         {
             this.hospitalContext = hospitalContext ?? throw new ArgumentNullException(nameof(hospitalContext));
         }
+
     }
 }

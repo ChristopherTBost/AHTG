@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 export class HospitalData extends Component {
     static displayName = HospitalData.name;
 
   constructor(props) {
     super(props);
-    this.state = { hospitals: [], loading: true };
+      this.state = { hospitals: [], loading: true };
   }
 
   componentDidMount() {
@@ -18,16 +19,20 @@ export class HospitalData extends Component {
         <thead>
           <tr>
             <th>Hospital</th>
-            <th>Edit</th>
-            <th>Delete</th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {hospitals.map(hospital =>
-              <tr key={hospital.Name}>
-              <td>{hospital.Name}</td>
-              <td><a href='./'>Edit</a></td>
-              <td><a href='./'>Delete</a></td>
+              <tr key={hospital.title}>
+              <td>{hospital.title}</td>
+                  <td>
+                      <Link tag={Link} className="text-dark" to={"/hospital-edit/" + hospital.id}>Edit</Link>
+                  </td>
+                  <td>
+                      <Link tag={Link} className="text-dark" to={"/hospital-delete/" + hospital.id}>Delete</Link>
+                  </td>
             </tr>
           )}
         </tbody>
@@ -43,7 +48,7 @@ export class HospitalData extends Component {
     return (
       <div>
         <h1 id="tabelLabel" >Hospitals</h1>
-            <p>Please choose the Hospital to work on or <a href='./'>click here to create a new one.</a></p>
+            <p>Please choose the Hospital to work on or <Link className="text-dark" to={"/hospital-create/"}>click here to create a new one.</Link></p>
         {contents}
       </div>
     );

@@ -63,12 +63,11 @@ namespace AHTG.Hospital.Logic
             
             if (repository == null) throw new ArgumentNullException(nameof(repository));
 
-            hospital = null;
+            hospital = repository.Hospitals.FirstOrDefault(_ => _.Id == hospitalKey);
 
-            if (!CanRead(hospital))
+            if (hospital == null || !CanRead(hospital))
                 return new LogicResultCollection(new[] { new LogicResult(ResultType.Error, ResultCode.OPERATION_NOT_PERMITTED) });
 
-            hospital = repository.Hospitals.FirstOrDefault(_ => _.Id == hospitalKey);
 
             return hospital == null ? new LogicResultCollection( new LogicResult(ResultType.Warning, ResultCode.OBJECT_NOT_FOUND) ) : LogicResultCollection.Default;
         }
@@ -88,7 +87,14 @@ namespace AHTG.Hospital.Logic
             if (!CanUpdate(hospital))
                 return new LogicResultCollection(new[] { new LogicResult(ResultType.Error, ResultCode.OPERATION_NOT_PERMITTED) });
 
-            repository.Update(hospital);
+            var ctxEntity = repository.Hospitals.FirstOrDefault(_ => _.Id == hospital.Id);
+
+            if (ctxEntity == null)
+                return new LogicResultCollection(new[] { new LogicResult(ResultType.Error, ResultCode.OBJECT_NOT_FOUND) });
+
+            ctxEntity.Title = hospital.Title;
+
+            repository.Update(ctxEntity);
 
             return LogicResultCollection.Default;
         }

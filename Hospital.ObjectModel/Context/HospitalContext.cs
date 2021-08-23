@@ -15,32 +15,28 @@ namespace AHTG.Hospital.ObjectModel.Context
 
         #region public
 
+        /// <summary>
+        /// Hospitals from the data store
+        /// </summary>
         public DbSet<Entities.Hospital> Hospitals { get; set; }
 
-        public HospitalContext(DbContextOptions options)
-            :base(options)
-        {
-        }
+        public HospitalContext(DbContextOptions options) :base(options) {}
 
         #endregion public
 
         #region protected
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-        }
-
+        /// <summary>
+        /// override to build the model using fluent api
+        /// </summary>
+        /// <param name="modelBuilder">the builder</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // add the hospital entity
             modelBuilder.Entity<Entities.Hospital>();
             
-            //base.Database.EnsureCreated();
-
-#if !IN_MEMORY_CONTEXT
-
             //
             // set up sequence for primary keys
             //
@@ -50,8 +46,10 @@ namespace AHTG.Hospital.ObjectModel.Context
 
             modelBuilder.Entity<Entities.Hospital>()
                 .Property(_ => _.Id)
-                .HasDefaultValue($"NEXT VALUE FOR {PRIMARY_KEY_SEQ_NAME};");
-#endif
+                .HasDefaultValueSql($"NEXT VALUE FOR {PRIMARY_KEY_SEQ_NAME}");
+
+                //.HasDefaultValueSql($"NEXT VALUE FOR {PRIMARY_KEY_SEQ_NAME};");
+                /*Grrrrrrrrrrrrrrrrrrrrr freaking semi-colon right there     ^. 4 hours of me griping about SQLExpress. */ 
         }
 
         #endregion protected
